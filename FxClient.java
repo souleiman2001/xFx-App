@@ -19,6 +19,9 @@ public class FxClient {
 			BufferedWriter headerWriter = new BufferedWriter(new OutputStreamWriter(out));
 			DataInputStream dataIn = new DataInputStream(in);
 
+		
+
+			
 			if (command.equals("d")) {
 				String header = "download " + fileName + "\n";
 				headerWriter.write(header, 0, header.length());
@@ -80,8 +83,31 @@ public class FxClient {
 				} finally {
 					connectionToServer.close();
 				}
+
+			} else if(command.equals("l")){
+				System.out.println("the client sent a list files request to the server");
+				String header ="List "+ fileName + "\n";
+				headerWriter.write(header,0,header.length());
+				headerWriter.flush();
+				while (true) {
+					/*  fn is the filename that is read through the data inputstream each time 
+					as long as the whole list of file names is
+				    */
+					String fn = dataIn.readUTF();
+					//the statement break is used to exit the loop and it happens when we reach the end of the file names
+					if (fn == null || fn.equals(""))
+					{  /* as soon as there is no more filenames, the program receives an empty string and leaves the loop
+						hence it can close the connection with the server
+						*/
+						break;
+					}
+                	System.out.println("Received file name: " + fn);
+				 }
+				 connectionToServer.close();
+
+
 			} else {
-				System.out.println("Sorry you entered a wrong command, you should either enter d( for download) or u(for upload)");
+				System.out.println("Sorry you entered a wrong command, you should either enter d( for download) with the filename or u(for upload) with the filename, or l(for list) with keyword files ");
 			}
 		}
 	}
