@@ -71,8 +71,27 @@ public class FxServer {
 						 try (FileOutputStream fileOut = new FileOutputStream("ServerShare/" + fileName)) {
 							fileOut.write(space, 0, size);
 						}
+					}else if(command.equals("List")){
+						System.out.println("The server is sending its files to a client whose part is: "+connectionFromClient.getPort());
+						File folder = new File("ServerShare");
+                        File[] listOfFiles = folder.listFiles();
+                        String[] fileNames = new String[listOfFiles.length];
+						for (int i = 0; i < listOfFiles.length; i++) {
+  							if (listOfFiles[i].isFile()) {
+    							fileNames[i] = listOfFiles[i].getName();
+  						}
+						}
+						for (String singlefilename : fileNames) {
+							// writeUTF() method is used to write a string in an outputstream
+							
+							dataOut.writeUTF(singlefilename);
+						  }
+						  // here we send an empty string to the client so that the client program can close a loop that keeps printing filenames
+						dataOut.writeUTF("");
 
-					} else {
+					}
+
+					else {
 
 						System.out.println("Connection got from an incompatible client");
 
