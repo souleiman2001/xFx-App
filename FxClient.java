@@ -58,11 +58,7 @@ public class FxClient {
 
 			} else if (command.equals("u")) {
 				
-			/*	If the client wants to upload a file, then the header will be as the following:
-				- **upload[one space][file name][one space][file size][Line Feed]**
-				
-				After sending the header, the client shall send the bytes of the file
-        */
+			
 				try {
 					FileInputStream fileIn = new FileInputStream("ClientShare/" + fileName);
 					int fileSize = fileIn.available();
