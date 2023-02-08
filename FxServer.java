@@ -57,13 +57,12 @@ public class FxServer {
 							connectionFromClient.close();
 						}
 					} else if (command.equals("upload")) {
-						 System.out.println("the server received your upload request waiting ....");
 
-						 header = headerReader.readLine();
-						 strk = new StringTokenizer(header, "\n");
+				     
+
+						 
 						 String temp= strk.nextToken();
 						 int size = Integer.parseInt(temp);
-
 						 byte[] space = new byte[size];
 
 						 dataIn.readFully(space);
@@ -71,6 +70,11 @@ public class FxServer {
 						 try (FileOutputStream fileOut = new FileOutputStream("ServerShare/" + fileName)) {
 							fileOut.write(space, 0, size);
 						}
+
+
+
+
+
 					}else if(command.equals("List")){
 						System.out.println("The server is sending its files to a client whose part is: "+connectionFromClient.getPort());
 						File folder = new File("ServerShare");
