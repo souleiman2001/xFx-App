@@ -58,17 +58,18 @@ public class FxClient {
 
 			} else if (command.equals("u")) {
 				
-
+			/*	If the client wants to upload a file, then the header will be as the following:
+				- **upload[one space][file name][one space][file size][Line Feed]**
+				
+				After sending the header, the client shall send the bytes of the file
+        */
 				try {
-					String header = "upload " + fileName + "\n";
 					FileInputStream fileIn = new FileInputStream("ClientShare/" + fileName);
 					int fileSize = fileIn.available();
+					String header = "upload " + fileName + " "+ fileSize +"\n";
 				    headerWriter.write(header, 0, header.length());
 				    headerWriter.flush();
-					header = fileSize + "\n";
-					headerWriter.write(header, 0, header.length());
-					headerWriter.flush();
-
+					
 					byte[] bytes = new byte[fileSize];
 					fileIn.read(bytes);
 
@@ -79,7 +80,7 @@ public class FxClient {
 
 				} catch (Exception ex) {
 					System.out.println("Sorry the file that you want to upload is not available !");
-
+					
 				} finally {
 					connectionToServer.close();
 				}
