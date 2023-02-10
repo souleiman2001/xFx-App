@@ -18,9 +18,6 @@ public class FxClient {
 			BufferedReader headerReader = new BufferedReader(new InputStreamReader(in));
 			BufferedWriter headerWriter = new BufferedWriter(new OutputStreamWriter(out));
 			DataInputStream dataIn = new DataInputStream(in);
-
-		
-
 			
 			if (command.equals("d")) {
 				String header = "download " + fileName + "\n";
@@ -29,11 +26,13 @@ public class FxClient {
 
 				header = headerReader.readLine();
 
-				if (header.equals("NOT FOUND")) {
+				if (header.equals("NOT FOUND")) 
+				{
 					System.out.println("We're extremely sorry, the file you specified is not available!");
-				} else {
-					StringTokenizer strk = new StringTokenizer(header, " ");
-
+				}
+				else
+				 {
+				    StringTokenizer strk = new StringTokenizer(header, " ");
 					String status = strk.nextToken();
 
 					if (status.equals("OK")) {
@@ -42,23 +41,65 @@ public class FxClient {
 
 						int size = Integer.parseInt(temp);
 
-						byte[] space = new byte[size];
-
-						dataIn.readFully(space);
-
-						try (FileOutputStream fileOut = new FileOutputStream("ClientShare/" + fileName)) {
+					try{
+			           FileInputStream fileIn = new FileInputStream("ClientShare/" + fileName);
+			           int offset = fileIn.available();		
+					   fileIn.close();		
+					   if (offset == size){
+					   // If the file sizes match, close the connection and show a message
+      		           System.out.println("File already downloaded");
+					   }
+			          else if(offset < size)
+			         {
+						// now we should receive the remaining bytes
+					    // Create an output stream to write the bytes to the file
+    					
+						RandomAccessFile output = new RandomAccessFile(fileName, "rw");
+    
+   						// Seek to the offset in the file
+   	 					output.seek(offset);
+    
+   					  // Read the bytes from the server and write them to the file
+    				
+    				  byte[] buffer = new byte[4096];
+    				  int count;
+    				  while ((count = dataIn.read(buffer)) != -1)
+					 {
+      				 output.write(buffer, 0, count);
+    				 }
+   				 	 // Close the output stream
+    				 output.close();
+   				 	 // Show a message indicating that the download is complete
+    				 System.out.println("Download complete");
+ 			  }
+  
+ 			 		// Close the socket connection
+  					//connectionToServer.close();
+							   
+		        } catch (Exception ex) {
+					 // file does not exist in clientshare so we download it
+					 byte[] space = new byte[size];
+					 dataIn.readFully(space);
+                     try (FileOutputStream fileOut = new FileOutputStream("ClientShare/" + fileName)) {
 							fileOut.write(space, 0, size);
 						}
-
-					} else {
+						System.out.println("the file was downloaded successfully");
+					}
+    		           // Check if the current file size is equal to the file size on the server
+    		        
+					
+				}
+				 else {
 						System.out.println("You're not connected to the right Server!");
 					}
 
 				}
 
+		
+
+
 			} else if (command.equals("u")) {
 				
-			
 				try {
 					FileInputStream fileIn = new FileInputStream("ClientShare/" + fileName);
 					int fileSize = fileIn.available();
