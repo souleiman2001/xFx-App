@@ -59,8 +59,7 @@ public class FxServer {
 					} else if (command.equals("upload")) {
 
 				     
-
-						 
+						
 						 String temp= strk.nextToken();
 						 int size = Integer.parseInt(temp);
 						 byte[] space = new byte[size];
