@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.util.StringTokenizer;
+import java.util.Arrays;
 
 public class FxClient {
 	public static void main(String[] args) throws Exception {
@@ -41,41 +42,64 @@ public class FxClient {
 
 						int size = Integer.parseInt(temp);
 
-					try{
+			try{
 			           FileInputStream fileIn = new FileInputStream("ClientShare/" + fileName);
 			           int offset = fileIn.available();		
-					   fileIn.close();		
-					   if (offset == size){
-					   // If the file sizes match, close the connection and show a message
-      		           System.out.println("File already downloaded");
-					   }
-			          else if(offset < size)
-			         {
+					   //fileIn.close();		
+				if (offset == size)
+				{  // If the file sizes match,  we need to check if the content of the file has changed or not
+					   // if it has changed we should download it otherwise not !  
+					   byte[] server_data = new byte[size];
+					   byte[] client_data = new byte[offset];
+					   fileIn.read(client_data);
+					   dataIn.readFully(server_data);
+					   if (Arrays.equals(client_data, server_data)) {
+						// File on the client and server are the same, no need to download again
+						System.out.println("File already downloaded");
+					} 
+				      else{
+					// go overwrite it now !
+					try (FileOutputStream fileOut = new FileOutputStream("ClientShare/" + fileName)) {
+							fileOut.write(server_data, 0, size);
+						}
+					}
+					  
+					   
+      		          // System.out.println("File already downloaded");
+				}
+                else if(offset != size)
+			        {   byte[] server_data = new byte[size];
+						dataIn.readFully(server_data);
+						try (FileOutputStream fileOut = new FileOutputStream("ClientShare/" + fileName)) {
+							fileOut.write(server_data, 0, size);
+						}
+						/* 
 						// now we should receive the remaining bytes
 					    // Create an output stream to write the bytes to the file
-    					
-						RandomAccessFile output = new RandomAccessFile(fileName, "rw");
-    
+    			        RandomAccessFile output = new RandomAccessFile("ClientShare/" + fileName, "rw");
    						// Seek to the offset in the file
    	 					output.seek(offset);
-    
-   					  // Read the bytes from the server and write them to the file
-    				
-    				  byte[] buffer = new byte[4096];
-    				  int count;
-    				  while ((count = dataIn.read(buffer)) != -1)
-					 {
-      				 output.write(buffer, 0, count);
-    				 }
-   				 	 // Close the output stream
-    				 output.close();
-   				 	 // Show a message indicating that the download is complete
-    				 System.out.println("Download complete");
- 			  }
+   					    // Read the bytes from the server and write them to the file
+    				    byte[] buffer = new byte[4096];
+    				    int count;
+    				    while ((count = dataIn.read(buffer)) != -1)
+					    {
+      				    output.write(buffer, 0, count);
+    				    }
+   				 	    // Close the output stream
+    				    output.close();
+   				 	    // Show a message indicating that the download is complete
+    				   System.out.println("Download complete");
+					   */
+
+                         
+                    }
   
+
+
  			 		// Close the socket connection
   					//connectionToServer.close();
-							   
+					  fileIn.close();			   
 		        } catch (Exception ex) {
 					 // file does not exist in clientshare so we download it
 					 byte[] space = new byte[size];
@@ -85,7 +109,8 @@ public class FxClient {
 						}
 						System.out.println("the file was downloaded successfully");
 					}
-    		           // Check if the current file size is equal to the file size on the server
+    		           
+					// Check if the current file size is equal to the file size on the server
     		        
 					
 				}
