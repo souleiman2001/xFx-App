@@ -100,7 +100,7 @@ public class FxServer {
 
 					}
 				} catch (Exception e) {
-					//
+				
 					e.printStackTrace();
 				}
 			}
