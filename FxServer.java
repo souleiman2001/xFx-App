@@ -48,6 +48,9 @@ public class FxServer {
 							fileIn.close();
 
 							dataOut.write(bytes, 0, fileSize);
+							header = headerReader.readLine();
+							String s1= strk.nextToken();
+                            String s2= strk.nextToken();
 
 						} catch (Exception ex) {
 							headerWriter.write(errorMessage, 0, errorMessage.length());
@@ -75,8 +78,6 @@ public class FxServer {
 
 
 					}else if(command.equals("List")){
-						//System.out.println("The server is sending its files to a client whose part is: "+connectionFromClient.getPort());
-						
 						File folder = new File("ServerShare");
                         File[] listOfFiles = folder.listFiles();
                         String[] fileNames = new String[listOfFiles.length];
