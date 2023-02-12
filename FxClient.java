@@ -152,20 +152,31 @@ public class FxClient {
 				String header ="List "+ fileName + "\n";
 				headerWriter.write(header,0,header.length());
 				headerWriter.flush();
-				while (true) {
-					/*  fn is the filename that is read through the data inputstream each time 
-					as long as the whole list of file names is
-				    */
-					String fn = dataIn.readUTF();
-					//the statement break is used to exit the loop and it happens when we reach the end of the file names
-					if (fn == null || fn.equals(""))
-					{  /* as soon as there is no more filenames, the program receives an empty string and leaves the loop
-						hence it can close the connection with the server
+				header = headerReader.readLine();
+				StringTokenizer strk = new StringTokenizer(header, " ");
+				String status = strk.nextToken();
+				if (status.equals("ok")){
+					while (true) {
+						/*  fn is the filename that is read through the data inputstream each time 
+						as long as the whole list of file names is
 						*/
-						break;
-					}
-                	System.out.println("Received file name: " + fn);
-				 }
+						String fn = dataIn.readUTF();
+						//the statement break is used to exit the loop and it happens when we reach the end of the file names
+						if (fn == null || fn.equals(""))
+						{  /* as soon as there is no more filenames, the program receives an empty string and leaves the loop
+							hence it can close the connection with the server
+							*/
+							break;
+						}
+						System.out.println("Received file name: " + fn);
+					 }
+				}
+                else{
+					System.out.println("sorry the servershare folder is empty");
+				}
+			
+
+				
 				 connectionToServer.close();
 
 
